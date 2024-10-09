@@ -8,7 +8,14 @@ namespace TrayRecognition
 {
     public enum enum_pn
     {
-        料號1,
+        product_03,
         料號2
+    }
+    public class excuteClass
+    {
+        public string stage { get; set; }
+        public string matrix { get; set; }
+        public string product { get; set; }
+        public string op_time { get; set; }
     }
 }
