@@ -9,7 +9,7 @@ namespace TrayRecognition
     public enum enum_pn
     {
         product_03,
-        料號2
+        
     }
     public class excuteClass
     {

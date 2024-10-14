@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 using Basic;
 
-
-namespace TrayRecognition
+namespace Traylib
 {
     public class returnData
     {
