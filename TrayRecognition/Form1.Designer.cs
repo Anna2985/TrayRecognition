@@ -36,6 +36,7 @@ namespace TrayRecognition
             this.panel_stage1 = new System.Windows.Forms.Panel();
             this.panel_stage2 = new System.Windows.Forms.Panel();
             this.panel_stage3 = new System.Windows.Forms.Panel();
+            this.button_continue = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // comboBox_料號
@@ -76,7 +77,6 @@ namespace TrayRecognition
             this.label_result.Size = new System.Drawing.Size(33, 12);
             this.label_result.TabIndex = 4;
             this.label_result.Text = "label1";
-            
             // 
             // panel_stage1
             // 
@@ -99,11 +99,21 @@ namespace TrayRecognition
             this.panel_stage3.Size = new System.Drawing.Size(200, 100);
             this.panel_stage3.TabIndex = 5;
             // 
+            // button_continue
+            // 
+            this.button_continue.Location = new System.Drawing.Point(43, 263);
+            this.button_continue.Name = "button_continue";
+            this.button_continue.Size = new System.Drawing.Size(122, 135);
+            this.button_continue.TabIndex = 6;
+            this.button_continue.Text = "button1";
+            this.button_continue.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button_continue);
             this.Controls.Add(this.panel_stage3);
             this.Controls.Add(this.panel_stage2);
             this.Controls.Add(this.panel_stage1);
@@ -127,6 +137,7 @@ namespace TrayRecognition
         private System.Windows.Forms.Panel panel_stage1;
         private System.Windows.Forms.Panel panel_stage2;
         private System.Windows.Forms.Panel panel_stage3;
+        private System.Windows.Forms.Button button_continue;
     }
 }
 
