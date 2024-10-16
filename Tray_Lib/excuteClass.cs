@@ -41,7 +41,7 @@ namespace Tray_Lib
                 excuteClasses.Add(excuteClass);
 
                 returnData.Data = excuteClasses;
-                string url = "http://192.168.15.113:3000/MetalMarkAI";
+                string url = "http://220.135.128.247:3000/MetalMarkAI";
                 string json_in = returnData.JsonSerializationt();
                 string json_out = Net.WEBApiPostJson(url, json_in);
                 returnData = json_out.JsonDeserializet<returnData>();
