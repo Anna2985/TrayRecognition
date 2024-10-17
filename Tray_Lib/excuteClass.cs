@@ -20,7 +20,7 @@ namespace Tray_Lib
         public string product { get; set; }
         public string op_time { get; set; }
         public static event Action OnStageCompleted;
-        public static bool ContinueExcute { get; set; } = false;
+        public static bool ContinueExcute { get; set; } 
         public static string url { get; } = "http://127.0.0.1:3000/MetalMarkAI";
         public static List<string> result1 { get; set; }
         public static List<string> result2 { get; set; }
@@ -132,6 +132,7 @@ namespace Tray_Lib
                 string json_in = returnData.JsonSerializationt();
                 string json_out = Net.WEBApiPostJson(url, json_in);
                 returnData = json_out.JsonDeserializet<returnData>();
+                Console.WriteLine($"stage{i} ContinueExcute = {ContinueExcute}");
                 if (i == 1)
                 {
                     ProcessMatrix(returnData.ValueAry, 0, result);
