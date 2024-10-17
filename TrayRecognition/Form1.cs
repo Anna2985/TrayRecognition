@@ -52,14 +52,11 @@ namespace TrayRecognition
         private void Button_start_Click(object sender, EventArgs e)
         {
             if (comboBox_料號.Text == "product_03")
-            {
-                //List<string> result = Tray_Lib.excuteClass.ExcuteProduct03();
-                // 在背景執行緒中執行
+            {            
                 Task.Run(() =>
                 {
                     List<string> result = Tray_Lib.excuteClass.ExcuteProduct03();
 
-                    // 在 UI 執行緒上更新結果
                     this.Invoke(new Action(() =>
                     {
                         label_result.Text = string.Join(Environment.NewLine, result);

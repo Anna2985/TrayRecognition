@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Basic;
-using HIS_DB_Lib;
 using System.Windows.Forms;
 
 
@@ -22,8 +21,96 @@ namespace Tray_Lib
         public string op_time { get; set; }
         public static event Action OnStageCompleted;
         public static bool ContinueExcute { get; set; } = false;
+        public static string url { get; } = "http://127.0.0.1:3000/MetalMarkAI";
+        public static List<string> result1 { get; set; }
+        public static List<string> result2 { get; set; }
+        public static List<string> result3 { get; set; }
+
+
+        public static string datetime { get; set; }
+        static void ExcuteProduct03_1()
+        {
+            ContinueExcute = false;
+            datetime = DateTime.Now.ToDateTimeString().Replace("/", "_").Replace(":", "_");
+            int stage_num = 1;
+            string matrix1 = "2,2";
+            returnData returnData = new returnData();
+            List<excuteClass> excuteClasses = new List<excuteClass>();
+            excuteClass excuteClass = new excuteClass();
+            excuteClass.matrix =  matrix1 ;
+            excuteClass.stage = stage_num.ToString();
+            excuteClass.product = "product_03";
+            excuteClass.op_time = datetime;
+            excuteClasses.Add(excuteClass);
+
+            returnData.Data = excuteClasses;
+            //string url = "http://220.135.128.247:3000/MetalMarkAI";
+            string json_in = returnData.JsonSerializationt();
+            string json_out = Net.WEBApiPostJson(url, json_in);
+            returnData = json_out.JsonDeserializet<returnData>();
+            result1?.Clear();
+            ProcessMatrix(returnData.ValueAry, 0, result1);
+        }
+        static void ExcuteProduct03_2()
+        {
+            if (datetime.StringIsEmpty() == true)
+            {
+                Console.WriteLine("請先執行ExcuteProduct03_1");
+                return;
+            }
+            ContinueExcute = false;
+            int stage_num = 2;
+            string matrix1 = "2,2";
+            returnData returnData = new returnData();
+            List<excuteClass> excuteClasses = new List<excuteClass>();
+            excuteClass excuteClass = new excuteClass();
+            excuteClass.matrix = matrix1;
+            excuteClass.stage = stage_num.ToString();
+            excuteClass.product = "product_03";
+            excuteClass.op_time = datetime;
+            excuteClasses.Add(excuteClass);
+
+            returnData.Data = excuteClasses;
+            string json_in = returnData.JsonSerializationt();
+            string json_out = Net.WEBApiPostJson(url, json_in);
+            returnData = json_out.JsonDeserializet<returnData>();
+            result2?.Clear();
+            ProcessMatrix(returnData.ValueAry, 2, result2);
+        }
+        static List<string> ExcuteProduct03_3()
+        {
+            List<string> result = new List<string>();
+            if (datetime.StringIsEmpty() == true)
+            {
+                Console.WriteLine("請先執行ExcuteProduct03_1");
+                return result;
+            }
+            ContinueExcute = false;
+            int stage_num = 3;
+            string matrix1 = "2,1";
+            returnData returnData = new returnData();
+            List<excuteClass> excuteClasses = new List<excuteClass>();
+            excuteClass excuteClass = new excuteClass();
+            excuteClass.matrix = matrix1;
+            excuteClass.stage = stage_num.ToString();
+            excuteClass.product = "product_03";
+            excuteClass.op_time = datetime;
+            excuteClasses.Add(excuteClass);
+
+            returnData.Data = excuteClasses;
+            string json_in = returnData.JsonSerializationt();
+            string json_out = Net.WEBApiPostJson(url, json_in);
+            returnData = json_out.JsonDeserializet<returnData>();
+            result3?.Clear();
+            ProcessMatrix(returnData.ValueAry, 4, result3);
+            result.AddRange(result1);
+            result.AddRange(result2);
+            result.AddRange(result3);
+            return result;
+        }
         static public List<string> ExcuteProduct03()
         {
+            ContinueExcute = false;
             string datetime = DateTime.Now.ToDateTimeString().Replace("/", "_").Replace(":", "_");
             int stage_num = 3;
             string matrix1 = "2,2";
@@ -41,7 +128,7 @@ namespace Tray_Lib
                 excuteClasses.Add(excuteClass);
 
                 returnData.Data = excuteClasses;
-                string url = "http://220.135.128.247:3000/MetalMarkAI";
+                //string url = "http://220.135.128.247:3000/MetalMarkAI";
                 string json_in = returnData.JsonSerializationt();
                 string json_out = Net.WEBApiPostJson(url, json_in);
                 returnData = json_out.JsonDeserializet<returnData>();
@@ -68,6 +155,7 @@ namespace Tray_Lib
             }
             return result;
         }
+        
         static void ProcessMatrix(List<string> valueAry, int increment, List<string> result)
         {
             if (valueAry != null)
