@@ -110,7 +110,7 @@ namespace Tray_Lib
         }
         static public List<string> ExcuteProduct03()
         {
-            ContinueExcute = false;
+            ContinueExcute = true;
             string datetime = DateTime.Now.ToDateTimeString().Replace("/", "_").Replace(":", "_");
             int stage_num = 3;
             string matrix1 = "2,2";
@@ -128,13 +128,14 @@ namespace Tray_Lib
                 excuteClasses.Add(excuteClass);
 
                 returnData.Data = excuteClasses;
-                //string url = "http://220.135.128.247:3000/MetalMarkAI";
+                string url = "http://127.0.0.1:3000/MetalMarkAI";
                 string json_in = returnData.JsonSerializationt();
                 string json_out = Net.WEBApiPostJson(url, json_in);
                 returnData = json_out.JsonDeserializet<returnData>();
                 if (i == 1)
                 {
                     ProcessMatrix(returnData.ValueAry, 0, result);
+                    ContinueExcute = false;
                     Console.WriteLine($"Stage {i} 完成，等待下一個條件...");
                     OnStageCompleted?.Invoke();
                     Wait();
@@ -150,6 +151,7 @@ namespace Tray_Lib
                 else if (i == 3)
                 {
                     ProcessMatrix(returnData.ValueAry, 4, result);
+                    ContinueExcute = false;
                     Console.WriteLine($"Stage {i} 完成");
                 }
             }
