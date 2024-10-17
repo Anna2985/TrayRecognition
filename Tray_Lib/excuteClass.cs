@@ -126,13 +126,14 @@ namespace Tray_Lib
                 excuteClass.product = "product_03";
                 excuteClass.op_time = datetime;
                 excuteClasses.Add(excuteClass);
-
+                Console.WriteLine($"stage{i} ContinueExcute = {ContinueExcute}");
+                Console.WriteLine("stage{i}拍照開始");
                 returnData.Data = excuteClasses;
                 string url = "http://127.0.0.1:3000/MetalMarkAI";
                 string json_in = returnData.JsonSerializationt();
                 string json_out = Net.WEBApiPostJson(url, json_in);
                 returnData = json_out.JsonDeserializet<returnData>();
-                Console.WriteLine($"stage{i} ContinueExcute = {ContinueExcute}");
+                Console.WriteLine("stage{i}拍照結束");
                 if (i == 1)
                 {
                     ProcessMatrix(returnData.ValueAry, 0, result);
