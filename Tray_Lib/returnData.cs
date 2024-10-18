@@ -204,4 +204,221 @@ namespace Tray_Lib
             return $"[{RequestUrl}] Result : {Result} ,{TimeTaken}";
         }
     }
+
+    public static class BasicClassMethod
+    {
+        static public object[] ClassToSQL<T, E>(this T _class) where E : Enum
+        {
+            object[] value = new object[Enum.GetNames(typeof(E)).Length];
+            Type enumType = typeof(E);
+            E _enum = Activator.CreateInstance<E>();
+            foreach (var field in enumType.GetFields())
+            {
+                if (field.FieldType.IsEnum)
+                {
+                    string enumName = field.Name;
+                    int enumIndex = (int)field.GetValue(_enum);
+
+                    // 使用 enumIndex 來填入對應的屬性值
+                    value[enumIndex] = typeof(T).GetProperty(enumName)?.GetValue(_class);
+                }
+            }
+
+            return value;
+        }
+        static public T SQLToClass<T, E>(this object[] values)
+        {
+            T obj = Activator.CreateInstance<T>();
+            E _enum = Activator.CreateInstance<E>();
+            Type enumType = typeof(E);
+
+            foreach (var field in enumType.GetFields())
+            {
+                string enumName = field.Name;
+                if (field.FieldType.IsEnum)
+                {
+
+                    int enumIndex = (int)field.GetValue(_enum);
+
+                    // 使用 enumIndex 來取得對應的屬性值
+                    object value = values[enumIndex];
+
+                    // 使用 enumName 來取得對應的屬性
+                    var property = typeof(T).GetProperty(enumName);
+                    if (value is DateTime)
+                    {
+                        if (property == null)
+                        {
+                            property?.SetValue(obj, value.ObjectToString());
+                        }
+                        else if (property.PropertyType.Name == "DateTime")
+                        {
+                            property?.SetValue(obj, value);
+                        }
+                        else
+                        {
+                            property?.SetValue(obj, value.ToDateTimeString());
+                        }
+
+                    }
+                    else
+                    {
+                        if (property == null)
+                        {
+                            property?.SetValue(obj, value.ObjectToString());
+                        }
+                        else if (property.PropertyType.Name == "DateTime")
+                        {
+                            property?.SetValue(obj, value.StringToDateTime());
+                        }
+                        else
+                        {
+                            // 將值填入對應的屬性
+                            property?.SetValue(obj, value.ObjectToString());
+                        }
+
+                    }
+
+                }
+            }
+
+            return obj;
+        }
+
+        static public List<object[]> ClassToSQL<T, E>(this List<T> _classes) where E : Enum, new()
+        {
+            List<object[]> list_value = new List<object[]>();
+            E _enum = Activator.CreateInstance<E>();
+            for (int i = 0; i < _classes.Count; i++)
+            {
+                object[] value = _classes[i].ClassToSQL<T, E>();
+                list_value.Add(value);
+            }
+            return list_value;
+        }
+
+        static public List<T> SQLToClass<T, E>(this List<object[]> values) where E : Enum, new()
+        {
+            List<T> list_value = new List<T>();
+            E _enum = Activator.CreateInstance<E>();
+
+            for (int i = 0; i < values.Count; i++)
+            {
+                object[] value = values[i];
+                T _class = values[i].SQLToClass<T, E>();
+                list_value.Add(_class);
+            }
+            return list_value;
+        }
+
+        static public T ObjToClass<T>(this object data)
+        {
+            string jsondata = data.JsonSerializationt();
+            return jsondata.JsonDeserializet<T>();
+        }
+        static public List<T> ObjToListClass<T>(this object data)
+        {
+            string jsondata = data.JsonSerializationt();
+            return jsondata.JsonDeserializet<List<T>>();
+        }
+
+        static public List<object[]> ObjToListSQL<T, E>(this object data) where E : Enum, new()
+        {
+            List<T> list_T = data.ObjToListClass<T>();
+
+            return list_T.ClassToSQL<T, E>();
+        }
+    }
+
+    public class ValidityClass
+    {
+        private List<validity> _validitys = new List<validity>();
+
+        public List<validity> Validitys { get => _validitys; set => _validitys = value; }
+
+
+        public void AddValidity(string validity_period, string lot)
+        {
+            validity _validity = new validity(validity_period, lot);
+            if (_validity.Check()) _validitys.Add(_validity);
+        }
+        public string Value
+        {
+            set
+            {
+                _validitys.Clear();
+                string[] text_ary = value.Split('\n');
+                for (int i = 0; i < text_ary.Length; i++)
+                {
+                    validity _validity = new validity();
+                    _validity.Value = text_ary[i];
+                    if (_validity.Check()) _validitys.Add(_validity);
+                }
+            }
+            get
+            {
+                return this.ToString();
+            }
+        }
+        public override string ToString()
+        {
+            string text = "";
+            for (int i = 0; i < _validitys.Count; i++)
+            {
+                text += _validitys[i].ToString();
+                if (i != _validitys.Count) text += "\n";
+            }
+            return text;
+        }
+
+        public class validity
+        {
+            [JsonPropertyName("validity_period")]
+            public string Validity_period { get; set; }
+            [JsonPropertyName("lot_number")]
+            public string Lot_number { get; set; }
+
+            public validity(string validity_period, string lot)
+            {
+                if (validity_period.Check_Date_String())
+                {
+                    this.Validity_period = validity_period;
+                    this.Lot_number = lot;
+                }
+            }
+            public validity()
+            {
+
+            }
+
+            public bool Check()
+            {
+                return Validity_period.Check_Date_String();
+            }
+            public string Value
+            {
+                set
+                {
+                    string 效期 = value.GetTextValue("效期");
+                    string 批號 = value.GetTextValue("批號");
+                    if (效期.Check_Date_String())
+                    {
+                        this.Validity_period = 效期;
+                        this.Lot_number = 批號;
+                    }
+                }
+                get
+                {
+                    return this.ToString();
+                }
+            }
+
+            public override string ToString()
+            {
+                if (Lot_number.StringIsEmpty()) Lot_number = "無";
+                return $"[效期]:{Validity_period},[批號]:{Lot_number}";
+            }
+        }
+    }
+
 }

@@ -52,16 +52,24 @@ namespace TrayRecognition
         private void Button_start_Click(object sender, EventArgs e)
         {
             if (comboBox_料號.Text == "product_03")
-            {            
-                Task.Run(() =>
+            {
+                try
                 {
-                    List<string> result = Tray_Lib.excuteClass.ExcuteProduct03();
-
-                    this.Invoke(new Action(() =>
+                    Task.Run(() =>
                     {
-                        label_result.Text = string.Join(Environment.NewLine, result);
-                    }));
-                });
+                        List<string> result = Tray_Lib.excuteClass.ExcuteProduct03();
+
+                        this.Invoke(new Action(() =>
+                        {
+                            label_result.Text = string.Join(Environment.NewLine, result);
+                        }));
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"錯誤: {ex.Message}");
+                }
+                
             }
         }
         private void ComboBox_料號_SelectedIndexChanged(object sender, EventArgs e)

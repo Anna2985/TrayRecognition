@@ -21,12 +21,10 @@ namespace Tray_Lib
         public string op_time { get; set; }
         public static event Action OnStageCompleted;
         public static bool ContinueExcute { get; set; } 
-        public static string url { get; } = "http://127.0.0.1:3000/MetalMarkAI";
+        public static string url { get; set; } = "http://127.0.0.1:3000/MetalMarkAI";
         public static List<string> result1 { get; set; }
         public static List<string> result2 { get; set; }
         public static List<string> result3 { get; set; }
-
-
         public static string datetime { get; set; }
         static void ExcuteProduct03_1()
         {
@@ -118,7 +116,8 @@ namespace Tray_Lib
             List<string> result = new List<string>();
             for (int i = 1; i <= stage_num; i++)
             {
-                returnData returnData = new returnData();
+                Tray_Lib.returnData returnData = new Tray_Lib.returnData();
+                //returnData returnData = new returnData();
                 List<excuteClass> excuteClasses = new List<excuteClass>();
                 excuteClass excuteClass = new excuteClass();
                 excuteClass.matrix = (i != stage_num ) ? matrix1 : matrix2;
@@ -127,16 +126,25 @@ namespace Tray_Lib
                 excuteClass.op_time = datetime;
                 excuteClasses.Add(excuteClass);
                 Console.WriteLine($"stage{i} ContinueExcute = {ContinueExcute}");
-                Console.WriteLine("stage{i}拍照開始");
+                Console.WriteLine($"stage{i}拍照開始");
                 returnData.Data = excuteClasses;
                 string url = "http://127.0.0.1:3000/MetalMarkAI";
+                Console.WriteLine($"{url}");
                 string json_in = returnData.JsonSerializationt();
                 string json_out = Net.WEBApiPostJson(url, json_in);
-                returnData = json_out.JsonDeserializet<returnData>();
-                Console.WriteLine("stage{i}拍照結束");
+                returnData = json_out.JsonDeserializet<Tray_Lib.returnData>();
+                Console.WriteLine($"stage{i}拍照結束");
+                Console.WriteLine($"json_in = {json_in}");
+                Console.WriteLine($"json_out = {json_out}");
+                if (returnData == null)
+                {
+                    Console.WriteLine("returnData為 null");
+                }
+                
                 if (i == 1)
                 {
-                    ProcessMatrix(returnData.ValueAry, 0, result);
+                    if(returnData.ValueAry != null) ProcessMatrix(returnData.ValueAry, 0, result);
+                    
                     ContinueExcute = false;
                     Console.WriteLine($"Stage {i} 完成，等待下一個條件...");
                     OnStageCompleted?.Invoke();
@@ -144,7 +152,7 @@ namespace Tray_Lib
                 }
                 else if (i == 2)
                 {
-                    ProcessMatrix(returnData.ValueAry, 2, result);
+                    if (returnData.ValueAry != null) ProcessMatrix(returnData.ValueAry, 2, result);
                     Console.WriteLine($"Stage {i} 完成，等待下一個條件...");
                     ContinueExcute = false;
                     OnStageCompleted?.Invoke();
@@ -152,7 +160,7 @@ namespace Tray_Lib
                 }
                 else if (i == 3)
                 {
-                    ProcessMatrix(returnData.ValueAry, 4, result);
+                    if (returnData.ValueAry != null) ProcessMatrix(returnData.ValueAry, 4, result);
                     ContinueExcute = false;
                     Console.WriteLine($"Stage {i} 完成");
                 }
